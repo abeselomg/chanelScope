@@ -35,23 +35,27 @@ function DashboardContent() {
         {/* Input Box Container */}
         <div className="bg-white p-5 rounded-[24px] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-gray-100 mb-8 relative max-w-[540px]">
           <label className="block text-[11px] font-bold text-[#555f76] mb-2 px-1">Channel URL</label>
-          <div className="flex flex-col sm:flex-row gap-2 relative">
+          <form 
+            onSubmit={(e) => {
+              e.preventDefault();
+              if(inputValue) router.push('/results?channel=' + encodeURIComponent(inputValue));
+            }}
+            className="flex flex-col sm:flex-row gap-2 relative"
+          >
             <input 
               type="text" 
-              placeholder="https://www.youtube.com/@motioncraftmedia"
+              placeholder="https://www.youtube.com/@mkbhd"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               className="flex-1 px-4 py-3 rounded-xl border border-gray-200 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-[13px] shadow-[inset_0_2px_4px_rgba(0,0,0,0.02)]"
             />
             <button 
-              onClick={() => {
-                if(inputValue) router.push('/results?channel=' + encodeURIComponent(inputValue));
-              }}
+              type="submit"
               className="px-6 py-3 bg-[#0a0f1c] text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors shadow-sm text-[13px] whitespace-nowrap"
             >
               Analyze Channel
             </button>
-          </div>
+          </form>
           <div className="mt-3 text-[11px] text-[#8e98ac] px-1 font-medium">
             You can paste a full YouTube channel URL or just the @handle to instantly reveal what is working right now.
           </div>
@@ -61,14 +65,14 @@ function DashboardContent() {
         <div className="max-w-[540px]">
           <h3 className="text-[11px] font-bold text-[#8e98ac] mb-3 ml-1 tracking-wide">Suggested sample channels</h3>
           <div className="flex flex-wrap gap-2.5 mb-6">
-            <button onClick={() => setInputValue('https://www.youtube.com/@FrameForgeStudio')} className="text-left px-4 py-3 bg-white border border-gray-100 rounded-[14px] shadow-[0_4px_12px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:border-gray-200 transition-all">
-              <div className="font-bold text-[12px] text-gray-900">FrameForge Studio</div>
+            <button onClick={() => setInputValue('https://www.youtube.com/@mkbhd')} className="text-left px-4 py-3 bg-white border border-gray-100 rounded-[14px] shadow-[0_4px_12px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:border-gray-200 transition-all">
+              <div className="font-bold text-[12px] text-gray-900">Marques Brownlee</div>
             </button>
-            <button onClick={() => setInputValue('https://www.youtube.com/@MotionCraftMedia')} className="text-left px-4 py-3 bg-white border border-gray-100 rounded-[14px] shadow-[0_4px_12px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:border-gray-200 transition-all">
-              <div className="font-bold text-[12px] text-gray-900">MotionCraft Media</div>
+            <button onClick={() => setInputValue('https://www.youtube.com/@Fireship')} className="text-left px-4 py-3 bg-white border border-gray-100 rounded-[14px] shadow-[0_4px_12px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:border-gray-200 transition-all">
+              <div className="font-bold text-[12px] text-gray-900">Fireship</div>
             </button>
-            <button onClick={() => setInputValue('https://www.youtube.com/@StorylineAdsLab')} className="text-left px-4 py-3 bg-white border border-gray-100 rounded-[14px] shadow-[0_4px_12px_rgba(0,0,0,0.01)] transition-all">
-              <div className="font-bold text-[12px] text-gray-900">Storyline Ads Lab</div>
+            <button onClick={() => setInputValue('https://www.youtube.com/@ColinAndSamir')} className="text-left px-4 py-3 bg-white border border-gray-100 rounded-[14px] shadow-[0_4px_12px_rgba(0,0,0,0.01)] transition-all">
+              <div className="font-bold text-[12px] text-gray-900">Colin and Samir</div>
             </button>
           </div>
           

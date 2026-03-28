@@ -6,9 +6,9 @@
   .bg-grid {
     background-size: 28px 28px;
     background-image: 
-      linear-gradient(to right, rgba(0,0,0,0.035) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(0,0,0,0.035) 1px, transparent 1px);
-    background-color: #f7f9fb;
+      linear-gradient(to right, rgba(0,0,0,0.030) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,0,0,0.030) 1px, transparent 1px);
+    background-color: #f8fafc;
   }
 }
 

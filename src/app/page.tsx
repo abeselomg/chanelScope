@@ -3,6 +3,7 @@
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Suspense, useState, useEffect } from 'react';
 import { Loader2, CheckCircle2 } from 'lucide-react';
+import Link from 'next/link';
 
 function DashboardContent() {
   const searchParams = useSearchParams();
@@ -11,12 +12,12 @@ function DashboardContent() {
   const [inputValue, setInputValue] = useState(channelParam);
 
   return (
-    <div className="w-full max-w-[1280px] mx-auto px-6 lg:px-10 mt-6 lg:mt-10 flex flex-col lg:flex-row items-center lg:items-start justify-between gap-12 lg:gap-8 pb-20">
+    <div className="w-full max-w-[1280px] mx-auto px-6 lg:px-10 mt-8 lg:mt-16 flex-1 flex flex-col lg:flex-row items-center lg:items-start justify-center lg:justify-between gap-12 lg:gap-8 pb-12 lg:pb-32">
       
       {/* Left Column - Hero */}
       <div className="w-full lg:max-w-[55%] pt-2">
         {/* Built For Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-gray-200/80 bg-white/80 backdrop-blur-sm shadow-sm mb-7">
+        <div className="hidden sm:inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-gray-200/80 bg-white/80 backdrop-blur-sm shadow-sm mb-7">
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
           <span className="text-[11px] font-semibold text-gray-500 tracking-wide">
             Built for strategy teams, producers, creative leads, and growth
@@ -56,7 +57,7 @@ function DashboardContent() {
               Analyze Channel
             </button>
           </form>
-          <div className="mt-3 text-[11px] text-[#8e98ac] px-1 font-medium">
+          <div className="hidden sm:block mt-3 text-[11px] text-[#8e98ac] px-1 font-medium">
             You can paste a full YouTube channel URL or just the @handle to instantly reveal what is working right now.
           </div>
         </div>
@@ -80,8 +81,8 @@ function DashboardContent() {
         </div>
       </div>
 
-      {/* Right Column - Mock Preview Card */}
-      <div className="w-full lg:w-[420px] xl:w-[460px] flex-shrink-0 relative mt-4 lg:mt-0">
+      {/* Right Column - Mock Preview Card - Hidden on Mobile */}
+      <div className="hidden lg:block w-full lg:w-[420px] xl:w-[460px] flex-shrink-0 relative mt-4 lg:mt-0">
         <div className="bg-white rounded-[24px] shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] border border-gray-100/80 p-5 md:p-6 transform sm:scale-95 origin-top lg:origin-top-left xl:scale-90 xl:w-[110%]">
           <div className="flex items-start justify-between mb-8">
             <div>
@@ -140,16 +141,16 @@ function DashboardContent() {
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-grid selection:bg-blue-100 selection:text-blue-900 flex flex-col font-sans">
-      {/* Top Bar Header matching the image exactly */}
-      <header className="w-full h-[72px] bg-transparent">
-        <div className="w-full h-full flex justify-between items-center px-6 lg:px-10">
-          <div className="flex items-center gap-3">
+    <main className="min-h-screen bg-grid selection:bg-blue-100 selection:text-blue-900 flex flex-col font-sans relative overflow-x-hidden">
+      {/* Original Transparent Header - Pinned to edge to match results page */}
+      <header className="w-full h-[72px] bg-transparent px-6 lg:px-10 relative z-50">
+        <div className="w-full h-full flex items-center">
+          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
             <div className="w-[32px] h-[32px] bg-[#0a0f1c] text-white flex items-center justify-center rounded-[10px] text-[10px] font-bold tracking-wider shadow-sm">
               CS
             </div>
-            <div className="font-bold text-[14px] text-[#0a0f1c] tracking-tight">Channel Scope</div>
-          </div>
+            <div className="font-bold text-[14px] text-[#0a0f1c] tracking-tight translate-y-[1px]">Channel Scope</div>
+          </Link>
         </div>
       </header>
 

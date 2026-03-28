@@ -80,7 +80,7 @@ function LoadingState({ channel, onComplete }: { channel?: string, onComplete: (
   }, [onComplete]);
 
   return (
-    <div className="w-full max-w-[800px] mx-auto px-6 mt-16 md:mt-24 flex flex-col items-center pb-20">
+    <div className="w-full max-w-[800px] mx-auto px-6 flex-1 flex flex-col items-center justify-center lg:justify-start lg:mt-24 pb-20">
       <Loader2 className="w-8 h-8 text-gray-300 animate-spin mb-10" />
       
       {/* Steps List */}
@@ -197,18 +197,18 @@ function ResultsContent() {
       {/* Top Bar Header */}
       <header className="w-full h-[72px] bg-white border-b border-gray-100/80 px-6 lg:px-10 relative">
         <div className="w-full h-full flex items-center">
-          {/* Brand - Constrained to screen-left for consistency */}
+          {/* Brand - Pinned to left edge for original airy layout */}
           <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity flex-shrink-0 z-10">
             <div className="w-[32px] h-[32px] bg-[#0a0f1c] text-white flex items-center justify-center rounded-[10px] text-[10px] font-bold tracking-wider shadow-sm">
               CS
             </div>
-            <div className="font-bold text-[14px] text-[#0a0f1c] tracking-tight">Channel Scope</div>
+            <div className="font-bold text-[14px] text-[#0a0f1c] tracking-tight translate-y-[1px]">Channel Scope</div>
           </Link>
 
           {/* Absolute Centered Wrapper - Forces search to align with content grid regardless of logo width */}
           <div className="absolute inset-x-0 inset-y-0 flex justify-center pointer-events-none">
             <div className="max-w-[1280px] w-full flex justify-end items-center px-6 lg:px-10 pointer-events-auto">
-              <div className="w-full max-w-[320px]">
+              <div className="hidden md:block w-full max-w-[320px]">
                 <form 
                   onSubmit={(e) => {
                     e.preventDefault();
@@ -276,7 +276,7 @@ function ResultsContent() {
               </div>
             </div>
             
-            <div className="flex items-center gap-3 ml-auto">
+            <div className="hidden md:flex items-center gap-3 md:ml-auto">
               <button 
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href);
@@ -292,28 +292,28 @@ function ResultsContent() {
           </div>
 
           {/* Bottom Row: Stats Strip */}
-          <div className="flex flex-wrap items-center gap-x-14 gap-y-4 pt-1">
-            <div className="flex flex-col">
+          <div className="flex flex-wrap items-center gap-x-8 lg:gap-x-14 gap-y-6 pt-1">
+            <div className="flex flex-col min-w-[110px] sm:min-w-0">
               <span className="text-[10px] font-medium text-gray-500 mb-0.5">Subscribers</span>
               <span className="text-[14px] font-bold text-gray-900 tracking-tight">{formatNumber(data.channelStats?.subscriberCount)}</span>
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-[110px] sm:min-w-0">
               <span className="text-[10px] font-medium text-gray-500 mb-0.5">Total videos</span>
               <span className="text-[14px] font-bold text-gray-900 tracking-tight">{formatNumber(data.channelStats?.videoCount)}</span>
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-[110px] sm:min-w-0">
               <span className="text-[10px] font-medium text-gray-500 mb-0.5">Published this month</span>
               <span className="text-[14px] font-bold text-gray-900 tracking-tight">{data.summary?.totals?.publishedThisMonth}</span>
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-[110px] sm:min-w-0">
               <span className="text-[10px] font-medium text-gray-500 mb-0.5">Views this month</span>
               <span className="text-[14px] font-bold text-gray-900 tracking-tight">{formatNumber(data.summary?.totals?.viewsThisMonth)}</span>
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-[110px] sm:min-w-0">
               <span className="text-[10px] font-medium text-gray-500 mb-0.5">Avg views/upload</span>
               <span className="text-[14px] font-bold text-gray-900 tracking-tight">{formatNumber(data.summary?.totals?.avgViews)}</span>
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-[110px] sm:min-w-0">
               <span className="text-[10px] font-medium text-gray-500 mb-0.5">Avg engagement</span>
               <span className="text-[14px] font-bold text-gray-900 tracking-tight">{data.summary?.totals?.avgEngagement}</span>
             </div>
@@ -322,10 +322,25 @@ function ResultsContent() {
       </div>
       
       {/* 5 Grid Highlight Cards */}
-      <div className="flex-1 max-w-[1280px] mx-auto w-full px-6 lg:px-10 py-10">
+      <div className="flex-1 max-w-[1280px] mx-auto w-full px-4 sm:px-6 lg:px-10 py-6 md:py-10">
+        
+        {/* Mobile-only Copy Link Button - Prominent placement above strategy grid */}
+        <div className="flex md:hidden mb-8">
+          <button 
+            onClick={() => {
+              navigator.clipboard.writeText(window.location.href);
+              setShowToast(true);
+              setTimeout(() => setShowToast(false), 3000);
+            }}
+            className="w-full flex items-center justify-center gap-2.5 px-5 py-3.5 bg-gray-900 text-white text-[13px] font-bold rounded-xl active:scale-[0.97] transition-all shadow-lg shadow-gray-100/50"
+          >
+            <LinkIcon className="w-4 h-4" />
+            Copy analysis link
+          </button>
+        </div>
         
         {/* Strategy Insights Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-10 w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-10 w-full">
           {data.summary?.strategy?.map((card: any, i: number) => {
             const getIcon = (id: string, className: string) => {
               switch (id) {
@@ -354,12 +369,12 @@ function ResultsContent() {
         </div>
 
         {/* Action Toolbar */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between border-b border-gray-200 pb-4 mb-8 gap-4">
-          <div className="flex items-center gap-3">
-            <div className="relative">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between border-b border-gray-100 pb-5 mb-8 gap-4 px-0">
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            <div className="relative shrink-0">
               <button 
                 onClick={() => setDateDropdownOpen(!dateDropdownOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 text-gray-700 font-semibold text-[12px] rounded-md hover:bg-gray-50 transition-colors shadow-sm outline-none"
+                className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 text-gray-700 font-semibold text-[12px] rounded-md hover:bg-gray-50 transition-colors shadow-sm outline-none whitespace-nowrap"
               >
                 <Calendar className="w-3.5 h-3.5 text-gray-400" />
                 {dateFilter}
@@ -382,10 +397,10 @@ function ResultsContent() {
             </div>
 
             {/* Sort Dropdown */}
-            <div className="relative">
+            <div className="relative shrink-0">
               <button 
                 onClick={() => setSortDropdownOpen(!sortDropdownOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 text-gray-700 font-semibold text-[12px] rounded-md hover:bg-gray-50 transition-colors shadow-sm outline-none"
+                className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 text-gray-700 font-semibold text-[12px] rounded-md hover:bg-gray-50 transition-colors shadow-sm outline-none whitespace-nowrap"
               >
                 <ArrowDownUp className="w-3.5 h-3.5 text-gray-400" />
                 {sortFilter}
@@ -407,12 +422,12 @@ function ResultsContent() {
               )}
             </div>
             
-            <div className="flex items-center bg-gray-100 rounded-md p-0.5">
+            <div className="flex items-center bg-gray-100 rounded-md p-0.5 shrink-0">
               {['All', 'Shorts', 'Long-form'].map(t => (
                 <button 
                   key={t}
                   onClick={() => setTypeFilter(t as any)}
-                  className={`px-3 py-1.5 text-[12px] font-semibold rounded-md transition-all ${typeFilter === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`px-3 py-1.5 text-[12px] font-semibold rounded-md transition-all whitespace-nowrap ${typeFilter === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                 >
                   {t}
                 </button>
@@ -422,21 +437,21 @@ function ResultsContent() {
             <Tooltip content="Hides the bottom 50% of the channel's performance">
               <button 
                 onClick={() => setBreakoutOnly(!breakoutOnly)}
-                className={`px-3 py-1.5 text-[12px] font-semibold rounded-md border transition-all ${breakoutOnly ? 'bg-green-50 border-green-200 text-green-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50 shadow-sm'}`}
+                className={`px-3 py-1.5 text-[12px] font-semibold rounded-md border transition-all shrink-0 whitespace-nowrap ${breakoutOnly ? 'bg-green-50 border-green-200 text-green-700' : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50 shadow-sm'}`}
               >
                 Breakout only
               </button>
             </Tooltip>
           </div>
           
-          <div className="relative">
+          <div className="relative w-full md:w-64">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
             <input 
               type="text" 
               placeholder="Search videos..." 
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="pl-9 pr-4 py-1.5 bg-white border border-gray-200 rounded-lg text-[13px] outline-none focus:ring-2 focus:ring-blue-500 w-[240px] shadow-sm font-medium"
+              className="pl-9 pr-4 py-1.5 bg-white border border-gray-200 rounded-lg text-[13px] outline-none focus:ring-2 focus:ring-blue-500 w-full shadow-sm font-medium"
             />
           </div>
         </div>
@@ -501,99 +516,102 @@ function ResultsContent() {
             return (
               <>
                 {paginated.map((video: any, i: number) => (
-                  <div key={video.id} className="bg-white border border-gray-100 rounded-[18px] p-4 flex flex-col md:flex-row items-start md:items-center gap-6 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all">
-                    {/* Rank */}
-                    <div className="w-8 h-8 rounded-lg bg-[#0a0f1c] text-white flex items-center justify-center font-bold text-[13px] flex-shrink-0">
-                      {(currentPage - 1) * 6 + i + 1}
+                  <div key={video.id} className="bg-white border border-gray-100 rounded-[20px] p-4 flex flex-col lg:flex-row items-stretch lg:items-center gap-5 lg:gap-8 shadow-[0_2px_12px_rgba(0,0,0,0.02)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.04)] transition-all">
+                    {/* Thumbnail & Rank */}
+                    <div className="flex items-start gap-4 flex-shrink-0">
+                      <div className="w-8 h-8 rounded-lg bg-[#0a0f1c] text-white flex items-center justify-center font-bold text-[13px] flex-shrink-0 mt-1">
+                        {(currentPage - 1) * 6 + i + 1}
+                      </div>
+                      
+                      {/* Thumbnail */}
+                      <div className="relative w-[150px] aspect-video rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 group cursor-pointer shadow-sm">
+                        <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center shadow-lg backdrop-blur-sm">
+                            <Play className="w-4 h-4 text-gray-900 ml-0.5" />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-              
-              {/* Thumbnail */}
-              <div className="relative w-[140px] aspect-video rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 group cursor-pointer group">
-                <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <div className="w-8 h-8 rounded-full bg-white/90 flex items-center justify-center shadow-lg backdrop-blur-sm">
-                    <Play className="w-4 h-4 text-gray-900 ml-0.5" />
-                  </div>
-                </div>
-              </div>
 
-              {/* Title & Tags */}
-              <div className="flex-1 min-w-0 pr-6">
-                <a href={`https://youtube.com/watch?v=${video.id}`} title={video.title} target="_blank" rel="noopener noreferrer" className="block text-[15px] font-bold text-gray-900 mb-2 leading-snug line-clamp-2 hover:text-blue-600 transition-colors">
-                  {video.title}
-                </a>
-                <div className="flex flex-wrap items-center gap-3 text-[11px] font-bold">
-                  <span className="text-gray-400 font-medium">
-                    {new Date(video.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                  </span>
-                  <span className={`px-2 py-0.5 rounded ${video.isShort ? 'bg-orange-50 text-orange-600' : 'bg-blue-50 text-blue-600'}`}>
-                    {video.isShort ? 'SHORT' : 'LONG-FORM'}
-                  </span>
-                  {video.momentum === 'Trending' && (
-                    <span className="flex items-center gap-1 text-[#00a36c]">
-                      <TrendingUp className="w-3 h-3" /> Breakout
+              {/* Info & Stats Wrapper */}
+              <div className="flex-1 min-w-0 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+                {/* Title & Tags */}
+                <div className="flex-1 min-w-0 lg:pr-4">
+                  <a href={`https://youtube.com/watch?v=${video.id}`} title={video.title} target="_blank" rel="noopener noreferrer" className="block text-[14px] md:text-[15px] font-bold text-gray-900 mb-2 leading-snug line-clamp-2 hover:text-blue-600 transition-colors">
+                    {video.title}
+                  </a>
+                  <div className="flex flex-wrap items-center gap-2.5 text-[10px] md:text-[11px] font-bold">
+                    <span className="text-gray-400 font-medium whitespace-nowrap">
+                      {new Date(video.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                     </span>
-                  )}
-                  {video.momentum === 'Growing Fast' && (
-                    <span className="flex items-center gap-1 text-purple-600">
-                      <TrendingUp className="w-3 h-3" /> Growing
+                    <span className={`px-2 py-0.5 rounded whitespace-nowrap ${video.isShort ? 'bg-orange-50 text-orange-600' : 'bg-blue-50 text-blue-600'}`}>
+                      {video.isShort ? 'SHORT' : 'LONG-FORM'}
                     </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Column Stats */}
-              <div className="flex items-center gap-7 pr-4">
-                <div className="flex flex-col min-w-[64px]">
-                  <span className="text-[10px] font-medium text-gray-500 mb-0.5">Views</span>
-                  <div className="flex items-center gap-1.5">
-                    <Eye className="w-3.5 h-3.5 text-gray-400 mt-0.5" />
-                    <span className="text-[14px] font-bold text-gray-900">{formatNumber(video.views)}</span>
-                  </div>
-                </div>
-                <div className="flex flex-col min-w-[70px]">
-                  <span className="text-[10px] font-medium text-gray-500 mb-0.5">Views/day</span>
-                  <div className="flex items-center gap-1.5">
-                    <TrendingUp className="w-3.5 h-3.5 text-gray-400 mt-0.5" />
-                    <span className="text-[14px] font-bold text-gray-900">{formatNumber(video.viewsPerDay)}</span>
-                  </div>
-                </div>
-                <div className="flex flex-col min-w-[64px]">
-                  <span className="text-[10px] font-medium text-gray-500 mb-0.5">Likes</span>
-                  <div className="flex items-center gap-1.5">
-                    <ThumbsUp className="w-3.5 h-3.5 text-gray-400 mt-0.5" />
-                    <span className="text-[14px] font-bold text-gray-900">{formatNumber(video.likes)}</span>
-                  </div>
-                </div>
-                <div className="flex flex-col min-w-[70px]">
-                  <span className="text-[10px] font-medium text-gray-500 mb-0.5">Comments</span>
-                  <div className="flex items-center gap-1.5">
-                    <MessageSquare className="w-3.5 h-3.5 text-gray-400 mt-0.5" />
-                    <span className="text-[14px] font-bold text-gray-900">{formatNumber(video.comments)}</span>
-                  </div>
-                </div>
-                <Tooltip content="Interactions per 100 views">
-                  <div className="flex flex-col min-w-[64px] cursor-help">
-                    <span className="text-[10px] font-medium text-gray-500 mb-0.5">Eng. rate</span>
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="w-3.5 h-3.5 text-gray-400 mt-0.5" />
-                      <span className="text-[14px] font-bold text-gray-900">
-                        {video.views > 0 ? ((video.likes + video.comments) / video.views * 100).toFixed(1) : 0}%
+                    {video.momentum === 'Trending' && (
+                      <span className="flex items-center gap-1 text-[#00a36c] whitespace-nowrap">
+                        <TrendingUp className="w-3 h-3" /> Breakout
                       </span>
+                    )}
+                    {video.momentum === 'Growing Fast' && (
+                      <span className="flex items-center gap-1 text-purple-600 whitespace-nowrap">
+                        <TrendingUp className="w-3 h-3" /> Growing
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Column Stats Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:flex lg:items-center gap-x-8 gap-y-5 lg:gap-7 xl:gap-9 py-3 lg:py-0 border-t lg:border-t-0 border-gray-50 lg:pr-2">
+                  <div className="flex flex-col min-w-[64px]">
+                    <span className="text-[9px] font-medium text-gray-400 uppercase tracking-wider mb-0.5">Views</span>
+                    <div className="flex items-center gap-1.5">
+                      <Eye className="w-3 h-3 text-gray-400" />
+                      <span className="text-[13px] font-bold text-gray-900">{formatNumber(video.views)}</span>
                     </div>
                   </div>
-                </Tooltip>
-
-                {/* SVG Sparkline strictly tied to calculated Mathematical Momentum */}
-                <Tooltip content="Daily view velocity">
-                  <div className="cursor-help flex">
-                    <Sparkline momentum={video.momentum} />
+                  <div className="flex flex-col min-w-[70px]">
+                    <span className="text-[9px] font-medium text-gray-400 uppercase tracking-wider mb-0.5">Views/day</span>
+                    <div className="flex items-center gap-1.5">
+                      <TrendingUp className="w-3 h-3 text-gray-400" />
+                      <span className="text-[13px] font-bold text-gray-900">{formatNumber(video.viewsPerDay)}</span>
+                    </div>
                   </div>
-                </Tooltip>
+                  <div className="flex flex-col min-w-[64px]">
+                    <span className="text-[9px] font-medium text-gray-400 uppercase tracking-wider mb-0.5">Likes</span>
+                    <div className="flex items-center gap-1.5">
+                      <ThumbsUp className="w-3 h-3 text-gray-400" />
+                      <span className="text-[13px] font-bold text-gray-900">{formatNumber(video.likes)}</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col min-w-[70px]">
+                    <span className="text-[9px] font-medium text-gray-400 uppercase tracking-wider mb-0.5">Comments</span>
+                    <div className="flex items-center gap-1.5">
+                      <MessageSquare className="w-3 h-3 text-gray-400" />
+                      <span className="text-[13px] font-bold text-gray-900">{formatNumber(video.comments)}</span>
+                    </div>
+                  </div>
+                  <Tooltip content="Interactions per 100 views">
+                    <div className="flex flex-col min-w-[64px] cursor-help">
+                      <span className="text-[9px] font-medium text-gray-400 uppercase tracking-wider mb-0.5">Eng. rate</span>
+                      <div className="flex items-center gap-1.5">
+                        <Clock className="w-3 h-3 text-gray-400" />
+                        <span className="text-[13px] font-bold text-gray-900">
+                          {video.views > 0 ? ((video.likes + video.comments) / video.views * 100).toFixed(1) : 0}%
+                        </span>
+                      </div>
+                    </div>
+                  </Tooltip>
+                    <Tooltip content="Momentum: Performance trend over the last 30 days">
+                      <div className="flex items-center justify-start lg:ml-2 pt-2 lg:pt-0 cursor-help">
+                        <Sparkline momentum={video.momentum} />
+                      </div>
+                    </Tooltip>
+                  </div>
+                </div>
               </div>
-            </div>
-                ))}
+            ))}
                 
                 {/* Pagination Controls */}
                 {totalPages > 1 && (

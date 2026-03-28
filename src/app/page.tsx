@@ -29,7 +29,7 @@ function DashboardContent() {
         </h1>
         
         <p className="text-[14px] md:text-[15px] text-[#555f76] mb-10 leading-relaxed max-w-[520px]">
-          Paste a <span className="text-[#FF0000] font-semibold">YouTube</span> channel URL to uncover top-performing videos, breakout Shorts, and content patterns.
+          Paste a YouTube channel URL to uncover top-performing videos, breakout Shorts, and content patterns.
         </p>
 
         {/* Input Box Container */}
@@ -88,8 +88,8 @@ function DashboardContent() {
               <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Preview</div>
               <div className="text-[15px] font-bold text-gray-900">This month's winners</div>
             </div>
-            <div className="px-2.5 py-1 bg-[#f8fafc] border border-gray-100 rounded-lg text-[9px] font-semibold text-gray-500 mt-1">
-              MotionCraft Media
+            <div className="px-2.5 py-1 bg-[#FFEEE5] border border-gray-100 rounded-lg text-[9px] font-semibold text-[#D9693C] mt-1">
+              Marques Brownlee
             </div>
           </div>
 
@@ -142,12 +142,14 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-grid selection:bg-blue-100 selection:text-blue-900 flex flex-col font-sans">
       {/* Top Bar Header matching the image exactly */}
-      <header className="w-full flex justify-between items-center px-6 lg:px-10 h-[72px] bg-transparent">
-        <div className="flex items-center gap-3">
-          <div className="w-[32px] h-[32px] bg-[#0a0f1c] text-white flex items-center justify-center rounded-[10px] text-[10px] font-bold tracking-wider shadow-sm">
-            CS
+      <header className="w-full h-[72px] bg-transparent">
+        <div className="w-full h-full flex justify-between items-center px-6 lg:px-10">
+          <div className="flex items-center gap-3">
+            <div className="w-[32px] h-[32px] bg-[#0a0f1c] text-white flex items-center justify-center rounded-[10px] text-[10px] font-bold tracking-wider shadow-sm">
+              CS
+            </div>
+            <div className="font-bold text-[14px] text-[#0a0f1c] tracking-tight">Channel Scope</div>
           </div>
-          <div className="font-bold text-[14px] text-[#0a0f1c] tracking-tight">Channel Scope</div>
         </div>
       </header>
 

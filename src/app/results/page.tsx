@@ -62,15 +62,22 @@ const StepItem = ({ current, target, text, num }: { current: number, target: num
   );
 };
 
-function LoadingState({ channel }: { channel?: string }) {
+function LoadingState({ channel, onComplete }: { channel?: string, onComplete: () => void }) {
   const [step, setStep] = useState(0);
 
   useEffect(() => {
     const t1 = setTimeout(() => setStep(1), 1000);
     const t2 = setTimeout(() => setStep(2), 2200);
     const t3 = setTimeout(() => setStep(3), 3600);
-    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };
-  }, []);
+    const t4 = setTimeout(() => {
+      setStep(4);
+      setTimeout(onComplete, 800); // Small pause for the last checkmark
+    }, 4800);
+    
+    return () => { 
+      clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4);
+    };
+  }, [onComplete]);
 
   return (
     <div className="w-full max-w-[800px] mx-auto px-6 mt-16 md:mt-24 flex flex-col items-center pb-20">
@@ -112,6 +119,7 @@ function ResultsContent() {
   const channel = searchParams.get('channel') || '';
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+  const [animationDone, setAnimationDone] = useState(false);
 
   // Initialize UI state directly from URL query parameters (supports Shared Links)
   const [typeFilter, setTypeFilter] = useState<'All' | 'Shorts' | 'Long-form'>((searchParams.get('type') as any) || 'All');
@@ -155,6 +163,8 @@ function ResultsContent() {
 
   useEffect(() => {
     if (!channel) return;
+    setData(null);
+    setAnimationDone(false);
     
     fetch(`/api/analyze?channel=${encodeURIComponent(channel)}`)
       .then(res => res.json().then(j => ({ status: res.status, data: j })))
@@ -170,10 +180,10 @@ function ResultsContent() {
     throw new Error(error);
   }
 
-  if (!data) {
+  if (!data || !animationDone) {
     return (
       <div className="flex-1 w-full relative flex flex-col">
-        <LoadingState channel={channel} />
+        <LoadingState channel={channel} onComplete={() => setAnimationDone(true)} />
       </div>
     );
   }
@@ -184,6 +194,49 @@ function ResultsContent() {
 
   return (
     <div className="flex-1 w-full bg-[#f8fafc] flex flex-col">
+      {/* Top Bar Header */}
+      <header className="w-full h-[72px] bg-white border-b border-gray-100/80 px-6 lg:px-10 relative">
+        <div className="w-full h-full flex items-center">
+          {/* Brand - Constrained to screen-left for consistency */}
+          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity flex-shrink-0 z-10">
+            <div className="w-[32px] h-[32px] bg-[#0a0f1c] text-white flex items-center justify-center rounded-[10px] text-[10px] font-bold tracking-wider shadow-sm">
+              CS
+            </div>
+            <div className="font-bold text-[14px] text-[#0a0f1c] tracking-tight">Channel Scope</div>
+          </Link>
+
+          {/* Absolute Centered Wrapper - Forces search to align with content grid regardless of logo width */}
+          <div className="absolute inset-x-0 inset-y-0 flex justify-center pointer-events-none">
+            <div className="max-w-[1280px] w-full flex justify-end items-center px-6 lg:px-10 pointer-events-auto">
+              <div className="w-full max-w-[320px]">
+                <form 
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const val = (e.currentTarget.elements.namedItem('channelSearch') as HTMLInputElement).value;
+                    if (val) window.location.href = '/results?channel=' + encodeURIComponent(val);
+                  }}
+                  className="relative flex items-center"
+                >
+                  <input 
+                    name="channelSearch"
+                    type="text" 
+                    placeholder="Analyze new channel..."
+                    className="w-full bg-gray-50/50 border border-gray-100/80 rounded-xl pl-4 pr-10 py-2 text-[12px] font-medium outline-none focus:bg-white focus:border-blue-500/20 focus:ring-4 focus:ring-blue-500/5 transition-all placeholder:text-gray-400"
+                  />
+                  <button 
+                    type="submit"
+                    className="absolute right-3 p-1 text-gray-400 hover:text-blue-500 transition-colors"
+                    title="Analyze channel"
+                  >
+                    <Search className="w-4 h-4" strokeWidth={2.5} />
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+
       {/* Channel Header Banner */}
       <div className="w-full bg-white border-b border-gray-100/80 py-6 shadow-[0_4px_24px_rgba(0,0,0,0.01)]">
         <div className="max-w-[1280px] w-full mx-auto px-6 lg:px-10 flex flex-col gap-6">
@@ -359,7 +412,7 @@ function ResultsContent() {
                 <button 
                   key={t}
                   onClick={() => setTypeFilter(t as any)}
-                  className={`px-3 py-1 text-[12px] font-semibold rounded-md transition-all ${typeFilter === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
+                  className={`px-3 py-1.5 text-[12px] font-semibold rounded-md transition-all ${typeFilter === t ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'}`}
                 >
                   {t}
                 </button>
@@ -570,34 +623,24 @@ function ResultsContent() {
             );
           })()}
         </div>
-      </div>
-      
-      {/* Toast Notification */}
-      {showToast && (
-        <div className="fixed bottom-8 right-8 bg-[#0a0f1c] text-white px-5 py-3.5 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.2)] flex items-center gap-3 animate-in fade-in slide-in-from-bottom-8 z-[100] transition-all">
-          <div className="w-5 h-5 bg-[#00a36c] rounded-full flex items-center justify-center">
-            <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+        
+        {/* Toast Notification */}
+        {showToast && (
+          <div className="fixed bottom-8 right-8 bg-[#0a0f1c] text-white px-5 py-3.5 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.2)] flex items-center gap-3 animate-in fade-in slide-in-from-bottom-8 z-[100] transition-all">
+            <div className="w-5 h-5 bg-[#00a36c] rounded-full flex items-center justify-center">
+              <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+            </div>
+            <span className="text-[13px] font-bold tracking-wide">Link copied to clipboard!</span>
           </div>
-          <span className="text-[13px] font-bold tracking-wide">Link copied to clipboard!</span>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
 
 export default function Results() {
   return (
-    <main className="min-h-screen bg-[#f8fafc] flex flex-col font-sans relative">
-      {/* Top Bar Header */}
-      <header className="w-full flex justify-between items-center px-6 lg:px-10 h-[72px] bg-white border-b border-gray-100/80 sticky top-0 z-50">
-        <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <div className="w-[32px] h-[32px] bg-[#0a0f1c] text-white flex items-center justify-center rounded-[10px] text-[10px] font-bold tracking-wider shadow-sm">
-            CS
-          </div>
-          <div className="font-bold text-[14px] text-[#0a0f1c] tracking-tight">Channel Scope</div>
-        </Link>
-      </header>
-
+    <main className="min-h-screen bg-grid selection:bg-blue-100 selection:text-blue-900 flex flex-col font-sans relative">
       <Suspense fallback={<div className="p-8 text-center text-gray-500 flex-1">Loading Application...</div>}>
          <ResultsContent />
       </Suspense>

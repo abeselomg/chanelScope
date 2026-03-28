@@ -247,13 +247,39 @@ export function generatePerformanceSummary(videos: any[]) {
     const sortedByDate = [...videos].sort((a,b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
     const oldestDate = new Date(sortedByDate[sortedByDate.length - 1].publishedAt);
     const newestDate = new Date(sortedByDate[0].publishedAt);
-    const totalDays = Math.max(1, (newestDate.getTime() - oldestDate.getTime()) / (1000 * 3600 * 24));
-    const avgDays = Math.max(1, Math.floor(totalDays / videos.length));
+    
+    const now = new Date();
+    const daysSinceLastUpload = (now.getTime() - newestDate.getTime()) / (1000 * 3600 * 24);
+    
+    let scheduleValue = '';
+    
+    if (daysSinceLastUpload > 90) {
+      const years = Math.floor(daysSinceLastUpload / 365);
+      const months = Math.floor(daysSinceLastUpload / 30);
+      
+      if (years >= 1) {
+        scheduleValue = `Dormant: No uploads in ${years} ${years === 1 ? 'year' : 'years'}.`;
+      } else {
+        scheduleValue = `Dormant: No uploads in ${months} ${months === 1 ? 'month' : 'months'}.`;
+      }
+    } else {
+      const totalDays = Math.max(1, (newestDate.getTime() - oldestDate.getTime()) / (1000 * 3600 * 24));
+      const avgDaysNumeric = totalDays / (videos.length - 1);
+      
+      if (avgDaysNumeric < 1) {
+        const avgHours = Math.max(1, Math.round(avgDaysNumeric * 24));
+        scheduleValue = `Averages 1 new upload every ${avgHours} ${avgHours === 1 ? 'hour' : 'hours'}.`;
+      } else {
+        const avgDays = avgDaysNumeric.toFixed(1);
+        const cleanDays = avgDays.endsWith('.0') ? Math.floor(parseFloat(avgDays)) : avgDays;
+        scheduleValue = `Averages 1 new upload every ${cleanDays} ${cleanDays === 1 ? 'day' : 'days'}.`;
+      }
+    }
     
     strategyCards.push({
       id: 'schedule',
       label: 'Upload Schedule',
-      value: `Averages 1 new upload every ${avgDays} days.`
+      value: scheduleValue
     });
   }
 
@@ -290,8 +316,8 @@ export function generatePerformanceSummary(videos: any[]) {
   let lengthStr = 'Draws even views across Shorts and Long-form.';
   if (shorts.length === 0) lengthStr = 'Relies exclusively on Long-form video execution.';
   else if (longs.length === 0) lengthStr = 'Relies exclusively on YouTube Shorts execution.';
-  else if (avgLongViews > avgShortViews * 1.5) lengthStr = `Long-form videos drive ${Math.floor(avgLongViews / avgShortViews)}x more views per upload than Shorts.`;
-  else if (avgShortViews > avgLongViews * 1.5) lengthStr = `Shorts drive ${Math.floor(avgShortViews / avgLongViews)}x more views per upload than Long-form.`;
+  else if (avgLongViews > avgShortViews * 1.5) lengthStr = `Long-form videos drive ${(avgLongViews / avgShortViews).toFixed(1)}x more views per upload than Shorts.`;
+  else if (avgShortViews > avgLongViews * 1.5) lengthStr = `Shorts drive ${(avgShortViews / avgLongViews).toFixed(1)}x more views per upload than Long-form.`;
   
   strategyCards.push({
     id: 'length',

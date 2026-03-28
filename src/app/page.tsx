@@ -1,101 +1,63 @@
-import Image from "next/image";
+"use client";
+
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
+
+function DashboardContent() {
+  const searchParams = useSearchParams();
+  const channel = searchParams.get('channel');
+  const range = searchParams.get('range') || 'this_month';
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[80vh] p-4 space-y-8">
+      <div className="text-center space-y-4">
+        <h1 className="text-5xl font-extrabold tracking-tight text-gray-900">
+          See which competitor videos are winning this month
+        </h1>
+        <p className="text-lg text-gray-500 max-w-2xl mx-auto">
+          Paste a YouTube channel URL to uncover top-performing videos, breakout Shorts, content patterns, and reasons behind what's working.
+        </p>
+      </div>
+      
+      <div className="w-full max-w-2xl flex flex-col sm:flex-row gap-3 bg-white p-2 rounded-2xl shadow-sm border border-gray-200">
+        <input 
+          type="text" 
+          placeholder="https://www.youtube.com/@mkbhd"
+          defaultValue={channel || ''}
+          className="flex-1 px-4 py-3 rounded-xl outline-none text-gray-900 placeholder-gray-400 bg-transparent"
+        />
+        <button className="px-8 py-3 bg-gray-900 text-white font-medium rounded-xl hover:bg-gray-800 transition-colors shadow-sm whitespace-nowrap">
+          Analyze Channel
+        </button>
+      </div>
+
+      {channel && (
+        <div className="mt-8 p-4 bg-blue-50 border border-blue-100 text-blue-800 rounded-xl w-full max-w-2xl text-center">
+          Analyzing <strong>{channel}</strong> for exactly <strong>{range}</strong>... (Actual data fetching to be implemented)
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <main className="min-h-screen bg-gray-50 selection:bg-blue-100 selection:text-blue-900 flex flex-col pt-12">
+      {/* Basic top bar placeholder */}
+      <header className="w-full max-w-6xl mx-auto px-4 flex justify-between items-center mb-12">
+        <div className="flex items-center gap-2 font-bold text-gray-900 text-xl tracking-tight">
+          <div className="w-8 h-8 bg-gray-900 text-white flex items-center justify-center rounded-lg text-sm">CS</div>
+          Channel Scope
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+        <div className="flex gap-4 text-sm font-medium text-gray-600">
+          <button className="hover:text-gray-900 transition-colors">Saved Analyses</button>
+          <button className="hover:text-gray-900 transition-colors">Recent Channels</button>
+        </div>
+      </header>
+
+      <Suspense fallback={<div className="p-8 text-center text-gray-500">Loading UI...</div>}>
+         <DashboardContent />
+      </Suspense>
+    </main>
   );
 }

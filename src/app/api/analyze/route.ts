@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { resolveChannel, getRecentVideos, calculateMomentum } from '@/services/youtube';
+import { resolveChannel, getRecentVideos, calculateMomentum, generatePerformanceSummary } from '@/services/youtube';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -21,11 +21,13 @@ export async function GET(request: NextRequest) {
     
     // Process the stats and calculate momentum
     const processedVideos = calculateMomentum(rawVideos);
+    const summary = generatePerformanceSummary(processedVideos);
 
     return NextResponse.json({
       success: true,
       channel: channelDetails.snippet,
       channelStats: channelDetails.statistics,
+      summary: summary,
       videos: processedVideos
     });
 

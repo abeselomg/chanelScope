@@ -143,6 +143,15 @@ export async function getRecentVideos(uploadsPlaylistId: string, maxResults: num
   return statsData.items || [];
 }
 
+function parseDuration(durationStr: string) {
+  const match = durationStr.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!match) return 0;
+  const hours = parseInt(match[1] || '0', 10);
+  const minutes = parseInt(match[2] || '0', 10);
+  const seconds = parseInt(match[3] || '0', 10);
+  return hours * 3600 + minutes * 60 + seconds;
+}
+
 /**
  * 3. Cleans the raw YouTube payload and mathematically derives the
  *    channel's current momentum baselines to tag Top Performers (percentile based).
@@ -160,6 +169,9 @@ export function calculateMomentum(rawVideos: any[]) {
     const likes = parseInt(v.statistics.likeCount || '0', 10);
     const comments = parseInt(v.statistics.commentCount || '0', 10);
     
+    const durationSeconds = parseDuration(v.contentDetails?.duration || '');
+    const isShort = durationSeconds > 0 && durationSeconds <= 61; // YouTube officially allows up to 60s, +1s pad
+    
     // Core custom velocity metric
     const viewsPerDay = Math.floor(views / ageInDays);
     
@@ -168,13 +180,17 @@ export function calculateMomentum(rawVideos: any[]) {
       title: v.snippet.title,
       thumbnail: v.snippet.thumbnails.maxres?.url || v.snippet.thumbnails.high?.url || v.snippet.thumbnails.default?.url,
       publishedAt: v.snippet.publishedAt,
+      durationSeconds,
+      isShort,
       // Pass through pure numbers
       views,
       likes,
       comments,
       viewsPerDay,
       // Placeholder for heuristic badge
-      momentum: 'Normal'
+      momentum: 'Normal',
+      tags: v.snippet.tags || [],
+      description: v.snippet.description || ''
     };
   });
 
@@ -203,4 +219,117 @@ export function calculateMomentum(rawVideos: any[]) {
   });
 
   return processed;
+}
+
+/**
+ * 4. Extracts advanced comparative metrics required for the UI Highlight Cards
+ */
+export function generatePerformanceSummary(videos: any[]) {
+  if (!videos || videos.length === 0) return null;
+
+  // 1. Averages & Counts
+  const totalViews = videos.reduce((sum, v) => sum + v.views, 0);
+  const totalLikes = videos.reduce((sum, v) => sum + v.likes, 0);
+  const totalComments = videos.reduce((sum, v) => sum + v.comments, 0);
+  
+  const avgViews = Math.floor(totalViews / videos.length);
+  const avgEngagement = totalViews > 0 ? ((totalLikes + totalComments) / totalViews) * 100 : 0;
+  
+  // Videos per week (assuming max 30 window)
+  const daysInWindow = Math.max(1, (new Date().getTime() - new Date(videos[videos.length-1].publishedAt).getTime()) / (1000 * 3600 * 24));
+  const cadence = (videos.length / daysInWindow) * 7;
+  
+  // New Strategy Analysis Engine
+  const strategyCards: any[] = [];
+  
+  // 1. Upload Schedule
+  if (videos.length > 1) {
+    const sortedByDate = [...videos].sort((a,b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+    const oldestDate = new Date(sortedByDate[sortedByDate.length - 1].publishedAt);
+    const newestDate = new Date(sortedByDate[0].publishedAt);
+    const totalDays = Math.max(1, (newestDate.getTime() - oldestDate.getTime()) / (1000 * 3600 * 24));
+    const avgDays = Math.max(1, Math.floor(totalDays / videos.length));
+    
+    strategyCards.push({
+      id: 'schedule',
+      label: 'Upload Schedule',
+      value: `Averages 1 new upload every ${avgDays} days.`
+    });
+  }
+
+  // 2. Top Keywords
+  const stopWords = new Set(['the','and','to','a','of','in','for','is','on','that','by','this','with','i','you','it','not','or','be','are','from','at','as','your','how','why','what','my']);
+  const wordCounts: Record<string, number> = {};
+  videos.forEach(v => {
+    const rawWords = v.title.toLowerCase().match(/\w+/g) || [];
+    rawWords.forEach((word: string) => {
+      if (word.length > 3 && !stopWords.has(word) && isNaN(Number(word))) wordCounts[word] = (wordCounts[word] || 0) + 1;
+    });
+    if (v.tags) {
+       v.tags.forEach((tag: string) => {
+         const dTag = tag.toLowerCase().replace(/[^a-z0-9\s]/g, '');
+         dTag.split(' ').forEach((tw: string) => {
+           if (tw.length > 3 && !stopWords.has(tw) && isNaN(Number(tw))) wordCounts[tw] = (wordCounts[tw] || 0) + 1;
+         });
+       });
+    }
+  });
+  const topWords = Object.entries(wordCounts).sort((a, b) => b[1] - a[1]).slice(0, 3).map(w => w[0]);
+  strategyCards.push({
+    id: 'keywords',
+    label: 'Top Keywords',
+    value: topWords.length > 0 ? `Highly targets SEO around: ${topWords.join(', ')}.` : 'No consistent SEO keywords targeted.'
+  });
+
+  // 3. Video Length Strategy
+  const shorts = videos.filter(v => v.isShort);
+  const longs = videos.filter(v => !v.isShort);
+  const avgShortViews = shorts.length > 0 ? shorts.reduce((sum, v) => sum + v.views, 0) / shorts.length : 0;
+  const avgLongViews = longs.length > 0 ? longs.reduce((sum, v) => sum + v.views, 0) / longs.length : 0;
+  
+  let lengthStr = 'Draws even views across Shorts and Long-form.';
+  if (shorts.length === 0) lengthStr = 'Relies exclusively on Long-form video execution.';
+  else if (longs.length === 0) lengthStr = 'Relies exclusively on YouTube Shorts execution.';
+  else if (avgLongViews > avgShortViews * 1.5) lengthStr = `Long-form videos drive ${Math.floor(avgLongViews / avgShortViews)}x more views per upload than Shorts.`;
+  else if (avgShortViews > avgLongViews * 1.5) lengthStr = `Shorts drive ${Math.floor(avgShortViews / avgLongViews)}x more views per upload than Long-form.`;
+  
+  strategyCards.push({
+    id: 'length',
+    label: 'Video Length Strategy',
+    value: lengthStr
+  });
+
+  // 4. Link & Affiliate Strategy
+  let videosWithLinks = 0;
+  videos.forEach(v => {
+    if (v.description && (v.description.includes('http://') || v.description.includes('https://') || v.description.includes('bit.ly') || v.description.includes('amzn.to'))) {
+      videosWithLinks++;
+    }
+  });
+  const linkPct = Math.floor((videosWithLinks / videos.length) * 100);
+  strategyCards.push({
+    id: 'links',
+    label: 'Link & Affiliate Strategy',
+    value: `${linkPct}% of their videos actively funnel viewers to external links.`
+  });
+
+  // 5. Title Length Strategy
+  const topViral = [...videos].sort((a,b) => b.viewsPerDay - a.viewsPerDay).slice(0, Math.max(1, Math.floor(videos.length * 0.2)));
+  const avgTitleLength = topViral.reduce((sum, v) => sum + v.title.length, 0) / topViral.length;
+  strategyCards.push({
+    id: 'titles',
+    label: 'Title Length Strategy',
+    value: `Viral hits strictly utilize ${avgTitleLength < 45 ? 'short, punchy' : avgTitleLength > 65 ? 'long, highly descriptive' : 'medium-length'} titles (avg. ${Math.floor(avgTitleLength)} chars).`
+  });
+
+  return {
+    totals: {
+      viewsThisMonth: totalViews,
+      avgViews: avgViews,
+      avgEngagement: avgEngagement.toFixed(1) + '%',
+      cadence: cadence >= 1 ? `${Math.round(cadence)} per week` : `1 per week`,
+      publishedThisMonth: videos.length
+    },
+    strategy: strategyCards
+  };
 }

@@ -65,7 +65,7 @@ export default function ChannelHeader({ data }: { data: DashboardData }) {
               </div>
             </div>
 
-            <div className="hidden md:flex items-center gap-3 md:ml-auto">
+            <div className="flex items-center gap-3 md:ml-auto">
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(window.location.href);

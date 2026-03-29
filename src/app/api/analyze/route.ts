@@ -42,10 +42,11 @@ export async function GET(request: NextRequest) {
       summary: summary,
       videos: processedVideos,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Analysis API Error:", error);
+    const message = error instanceof Error ? error.message : "Failed to analyze channel";
     return NextResponse.json(
-      { error: error.message || "Failed to analyze channel" },
+      { error: message },
       { status: 500 },
     );
   }

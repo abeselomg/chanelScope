@@ -37,10 +37,8 @@ const StepItem = ({
 };
 
 export default function LoadingState({
-  channel,
   onComplete,
 }: {
-  channel?: string;
   onComplete: () => void;
 }) {
   const [step, setStep] = useState(0);

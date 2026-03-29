@@ -95,7 +95,7 @@ export async function resolveChannel(input: string) {
         });
         if (handleData.items && handleData.items.length > 0)
           return handleData.items[0];
-      } catch (e) {
+      } catch {
         // Fall through to general search below if handle fails
       }
     }
@@ -147,6 +147,7 @@ export async function getRecentVideos(
 
   // YouTube's /videos endpoint requires comma separated IDs
   const videoIds = data.items
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((item: any) => item.snippet.resourceId.videoId)
     .join(",");
 
@@ -171,6 +172,7 @@ function parseDuration(durationStr: string) {
  * 3. Cleans the raw YouTube payload and mathematically derives the
  *    channel's current momentum baselines to tag Top Performers (percentile based).
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function calculateMomentum(rawVideos: any[]) {
   const now = new Date();
 
@@ -247,6 +249,7 @@ export function calculateMomentum(rawVideos: any[]) {
 /**
  * 4. Extracts advanced comparative metrics required for the UI Highlight Cards
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function generatePerformanceSummary(videos: any[]) {
   if (!videos || videos.length === 0) return null;
 
@@ -269,6 +272,7 @@ export function generatePerformanceSummary(videos: any[]) {
   const cadence = (videos.length / daysInWindow) * 7;
 
   // New Strategy Analysis Engine
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const strategyCards: any[] = [];
 
   // 1. Upload Schedule

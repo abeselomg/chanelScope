@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Link as LinkIcon, Check } from 'lucide-react';
 import { DashboardData } from '@/types';
 import { formatNumber } from '@/lib/utils';
@@ -19,12 +20,16 @@ export default function ChannelHeader({ data }: { data: DashboardData }) {
               {!imgError &&
               (data.channel.thumbnails?.high?.url ||
                 data.channel.thumbnails?.default?.url) ? (
-                <img
+                <Image
                   src={
                     data.channel.thumbnails?.high?.url ||
-                    data.channel.thumbnails?.default?.url
+                    data.channel.thumbnails?.default?.url ||
+                    ''
                   }
                   alt={data.channel.title}
+                  width={64}
+                  height={64}
+                  unoptimized
                   onError={() => setImgError(true)}
                   className="w-[64px] h-[64px] flex-shrink-0 rounded-[16px] object-cover shadow-sm border border-gray-200"
                 />

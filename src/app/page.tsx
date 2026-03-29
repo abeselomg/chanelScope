@@ -120,7 +120,7 @@ function DashboardContent() {
                 Preview
               </div>
               <div className="text-[15px] font-bold text-gray-900">
-                This month's winners
+                This month&apos;s winners
               </div>
             </div>
             <div className="px-2.5 py-1 bg-[#FFEEE5] border border-gray-100 rounded-lg text-[9px] font-semibold text-[#D9693C] mt-1">

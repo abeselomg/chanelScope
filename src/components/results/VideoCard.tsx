@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import { Play, TrendingUp, Eye, ThumbsUp, MessageSquare, Clock } from 'lucide-react';
 import { formatNumber } from '@/lib/utils';
 import Sparkline from '@/components/ui/Sparkline';
@@ -21,10 +22,12 @@ const VideoCard = React.memo(function VideoCard({ video, rank }: { video: VideoD
 
         {/* Thumbnail */}
         <div className="relative w-[150px] aspect-video rounded-xl overflow-hidden bg-gray-100 flex-shrink-0 group cursor-pointer shadow-sm">
-          <img
+          <Image
             src={video.thumbnail}
             alt={video.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            fill
+            unoptimized
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
           />
           <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">

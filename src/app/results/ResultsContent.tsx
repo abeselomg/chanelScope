@@ -1,25 +1,10 @@
 "use client";
 
-import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useSearchParams, usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
-import {
-  Check,
-  SearchX,
-  Search,
-  Link as LinkIcon,
-  TrendingUp,
-  Zap,
-  Target,
-  Play,
-  Calendar,
-  ChevronDown,
-  ArrowDownUp,
-  Clock,
-  MessageSquare
-} from "lucide-react";
+import { SearchX } from "lucide-react";
 import Link from "next/link";
-import Tooltip from "@/components/Tooltip";
-import { formatNumber, isWithinDate } from "@/lib/utils";
+import { isWithinDate } from "@/lib/utils";
 import LoadingState from "@/components/results/LoadingState";
 import EmptyState from "@/components/results/EmptyState";
 import VideoCard from "@/components/results/VideoCard";
@@ -38,7 +23,7 @@ export default function ResultsContent() {
 
   // Initialize UI state directly from URL query parameters (supports Shared Links)
   const [typeFilter, setTypeFilter] = useState<"All" | "Shorts" | "Long-form">(
-    (searchParams.get("type") as any) || "All",
+    (searchParams.get("type") as "All" | "Shorts" | "Long-form") || "All",
   );
   const [breakoutOnly, setBreakoutOnly] = useState(
     searchParams.get("breakout") === "true",
@@ -50,13 +35,9 @@ export default function ResultsContent() {
   const [currentPage, setCurrentPage] = useState(
     parseInt(searchParams.get("page") || "1", 10),
   );
-  const [imgError, setImgError] = useState(false);
-  const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
   const [sortFilter, setSortFilter] = useState(
     searchParams.get("sort") || "Total Views",
   );
-  const [sortDropdownOpen, setSortDropdownOpen] = useState(false);
-  const [showToast, setShowToast] = useState(false);
 
   // Reset page safely if critical filters alter lengths, but skip initial mount
   const isInitialMount = useRef(true);
@@ -123,7 +104,6 @@ export default function ResultsContent() {
     return (
       <div className="flex-1 w-full relative flex flex-col">
         <LoadingState
-          channel={channel}
           onComplete={() => setAnimationDone(true)}
         />
       </div>
@@ -181,7 +161,7 @@ export default function ResultsContent() {
                     className="absolute right-3 p-1 text-gray-400 hover:text-blue-500 transition-colors"
                     title="Analyze channel"
                   >
-                    <Search className="w-4 h-4" strokeWidth={2.5} />
+                    <SearchX className="w-4 h-4" strokeWidth={2.5} />
                   </button>
                 </form>
               </div>
@@ -313,19 +293,7 @@ export default function ResultsContent() {
           })()}
         </div>
 
-        {/* Toast Notification */}
-        {showToast && (
-          <div className="fixed bottom-8 right-8 bg-[#0a0f1c] text-white px-5 py-3.5 rounded-xl shadow-[0_8px_30px_rgba(0,0,0,0.2)] flex items-center gap-3 animate-in fade-in slide-in-from-bottom-8 z-[100] transition-all">
-            <div className="w-5 h-5 bg-[#00a36c] rounded-full flex items-center justify-center">
-              <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
-            </div>
-            <span className="text-[13px] font-bold tracking-wide">
-              Link copied to clipboard!
-            </span>
-          </div>
-        )}
       </div>
     </div>
   );
 }
-

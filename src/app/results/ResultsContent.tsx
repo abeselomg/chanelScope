@@ -2,7 +2,7 @@
 
 import { useSearchParams, usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
-import { SearchX } from "lucide-react";
+import { Search, SearchX } from "lucide-react";
 import Link from "next/link";
 import { isWithinDate } from "@/lib/utils";
 import LoadingState from "@/components/results/LoadingState";
@@ -161,7 +161,7 @@ export default function ResultsContent() {
                     className="absolute right-3 p-1 text-gray-400 hover:text-blue-500 transition-colors"
                     title="Analyze channel"
                   >
-                    <SearchX className="w-4 h-4" strokeWidth={2.5} />
+                    <Search className="w-4 h-4" strokeWidth={2.5} />
                   </button>
                 </form>
               </div>

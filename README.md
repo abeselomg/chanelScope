@@ -121,10 +121,12 @@ I used AI tools throughout the build — not to replace my thinking, but to comp
 
 Features being considered for future iterations:
 - **Side-by-side channel comparison** — Analyze two competitors simultaneously to spot content gaps.
-- **AI-powered title suggestions** — Generate title variations based on the channel's proven winning patterns.
+- **Title suggestions** — Generate title variations based on the channel's proven winning patterns.
 - **Historical tracking** — Store snapshots over time to visualize momentum trends week-over-week.
 - **Comment sentiment analysis** — Understand *why* a video resonated, not just that it did.
 - **Export to PDF/CSV** — Let teams bring analysis into content planning docs and spreadsheets.
+
+
 
 ## 🤝 Contributing
 Contributions, issues, and feature requests are welcome!

@@ -8,8 +8,8 @@ export default function Error({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
     console.error(error);
@@ -23,7 +23,9 @@ export default function Error({
           <div className="w-[32px] h-[32px] bg-[#0a0f1c] text-white flex items-center justify-center rounded-[10px] text-[10px] font-bold tracking-wider shadow-sm">
             CS
           </div>
-          <div className="font-bold text-[14px] text-[#0a0f1c] tracking-tight">Channel Scope</div>
+          <div className="font-bold text-[14px] text-[#0a0f1c] tracking-tight">
+            Channel Scope
+          </div>
         </Link>
       </header>
 
@@ -31,9 +33,12 @@ export default function Error({
         <div className="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-6 shadow-sm border border-red-100">
           <AlertCircle className="w-8 h-8" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-3 tracking-tight">Something went wrong</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-3 tracking-tight">
+          Something went wrong
+        </h2>
         <p className="text-[14px] md:text-[15px] text-gray-500 max-w-sm mb-8 leading-relaxed">
-          {error.message || "We couldn't analyze this channel. Please check the URL and try again."}
+          {error.message ||
+            "We couldn't analyze this channel. Please check the URL and try again."}
         </p>
         <div className="flex gap-4">
           <button
